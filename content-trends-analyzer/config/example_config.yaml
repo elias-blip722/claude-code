@@ -1,0 +1,153 @@
+monitoring_config:
+  name: "AI and Tech Trends 2025"
+  description: "Monitor AI, machine learning, and technology developments"
+
+  sources:
+    youtube:
+      enabled: true
+      priority: "high"
+
+      # Search for these terms
+      search_terms:
+        - "artificial intelligence 2025"
+        - "machine learning tutorial"
+        - "AI news"
+        - "tech trends"
+
+      # Monitor these channels (add channel IDs)
+      channels: []
+        # - "UCXuqSBlHAE6Xw-yeJA0Tunw"  # Example: Linus Tech Tips
+
+      # Categories to monitor
+      categories:
+        - "28"  # Science & Technology
+
+      # Filters
+      min_views: 1000
+      min_likes: 50
+      max_duration: 3600  # 1 hour in seconds
+      max_results: 50
+
+      # Only get videos published after this date (ISO format)
+      # published_after: "2025-01-01T00:00:00Z"
+
+    twitter:
+      enabled: false  # Enable when you have Twitter API credentials
+      priority: "high"
+      rate_limit: "450/15min"
+
+      # Track these accounts
+      accounts:
+        - "@AnthropicAI"
+        - "@OpenAI"
+        - "@GoogleAI"
+
+      # Track these hashtags
+      hashtags:
+        - "#AI"
+        - "#MachineLearning"
+        - "#ArtificialIntelligence"
+
+      # Search for these keywords
+      keywords:
+        - "artificial intelligence"
+        - "large language model"
+        - "LLM"
+        - "neural network"
+
+      # Exclude these keywords
+      exclude_keywords:
+        - "crypto"
+        - "NFT"
+
+      # Filters
+      content_types:
+        - "text"
+        - "video"
+        - "image"
+
+      min_likes: 10
+      min_retweets: 5
+      verified_only: false
+      max_results: 100
+
+    meta:
+      enabled: false  # Enable when you have Meta Content Library access
+      priority: "medium"
+
+      # Search keywords
+      keywords:
+        - "artificial intelligence"
+        - "machine learning"
+        - "AI breakthrough"
+
+      # Monitor these accounts/pages
+      accounts: []
+
+      # Content type filters
+      content_types:
+        - "photo"
+        - "video"
+        - "link"
+
+      min_interactions: 50
+      max_results: 50
+
+    rss_feeds:
+      enabled: true
+      priority: "low"
+
+      # RSS feed URLs to monitor
+      feeds:
+        - "https://techcrunch.com/feed/"
+        - "https://www.theverge.com/rss/index.xml"
+        - "https://arstechnica.com/feed/"
+        - "https://www.wired.com/feed/rss"
+        - "https://news.ycombinator.com/rss"
+
+      # Filter by keywords
+      keywords:
+        - "AI"
+        - "artificial intelligence"
+        - "machine learning"
+        - "neural network"
+        - "ChatGPT"
+        - "Claude"
+        - "LLM"
+
+  analysis:
+    trend_detection:
+      enabled: true
+      min_mentions: 5        # Minimum mentions to be considered a trend
+      time_window: "24h"     # Time window for trend detection
+      growth_threshold: 1.5  # 1.5x growth to be considered trending
+
+    sentiment_analysis:
+      enabled: true
+
+    content_clustering:
+      enabled: true
+      algorithm: "kmeans"
+      num_clusters: 5
+
+  output:
+    # Report formats
+    formats:
+      - "json"
+      - "csv"
+      - "html"
+
+    # Output destinations
+    destinations:
+      - type: "file"
+        path: "./reports/"
+
+    # Report generation schedule (cron format)
+    schedule: "0 */6 * * *"  # Every 6 hours
+
+  scheduling:
+    # Collection schedules (cron format)
+    youtube: "0 */2 * * *"    # Every 2 hours
+    twitter: "*/5 * * * *"    # Every 5 minutes (when enabled)
+    meta: "*/30 * * * *"      # Every 30 minutes (when enabled)
+    rss_feeds: "0 */4 * * *"  # Every 4 hours
