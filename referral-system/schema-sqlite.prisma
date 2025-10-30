@@ -1,0 +1,354 @@
+// Prisma Schema for Two-Way Referral Management System - SQLite Version
+// This schema uses SQLite instead of PostgreSQL (no installation needed!)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER MANAGEMENT
+// ============================================
+
+model User {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  hashedPassword    String?
+  name              String
+  role              String   @default("STAKEHOLDER") // ADMIN or STAKEHOLDER
+  isActive          Boolean  @default(true)
+  emailVerified     Boolean  @default(false)
+
+  // OAuth fields
+  googleId          String?  @unique
+  microsoftId       String?  @unique
+
+  // Security
+  twoFactorEnabled  Boolean  @default(false)
+  twoFactorSecret   String?
+  failedLoginAttempts Int    @default(0)
+  lockedUntil       DateTime?
+  lastPasswordChange DateTime?
+
+  // Metadata
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  lastLoginAt       DateTime?
+  lastLoginIp       String?
+
+  // Relations
+  submissions       Submission[]
+  comments          Comment[]
+  statusChanges     StatusHistory[]
+  assignedSubmissions Submission[] @relation("AssignedTo")
+  notifications     Notification[]
+  sessions          Session[]
+  auditLogs         AuditLog[]
+
+  @@map("users")
+}
+
+model Session {
+  id            String   @id @default(uuid())
+  userId        String
+  token         String   @unique
+  refreshToken  String?  @unique
+  expiresAt     DateTime
+  ipAddress     String?
+  userAgent     String?
+  deviceFingerprint String?
+  createdAt     DateTime @default(now())
+  lastActivity  DateTime @default(now())
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// ============================================
+// REFERRAL SUBMISSIONS
+// ============================================
+
+model Submission {
+  id                  String            @id @default(uuid())
+  referenceId         String            @unique
+
+  // Submission details
+  title               String
+  description         String
+  status              String            @default("RED") // RED, AMBER, GREEN
+  priority            String            @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+
+  // User relationships
+  userId              String
+  assignedToId        String?
+
+  // Google Drive integration
+  googleDriveFolderId String?
+  googleDriveFolderUrl String?
+  driveSyncStatus     String            @default("PENDING") // PENDING, SYNCING, SYNCED, FAILED
+  lastDriveSyncAt     DateTime?
+  driveSyncError      String?
+  driveSyncRetries    Int               @default(0)
+
+  // Metadata
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  completedAt         DateTime?
+  archivedAt          DateTime?
+
+  // Relations
+  user                User              @relation(fields: [userId], references: [id])
+  assignedTo          User?             @relation("AssignedTo", fields: [assignedToId], references: [id])
+  files               File[]
+  comments            Comment[]
+  statusHistory       StatusHistory[]
+  tags                SubmissionTag[]
+
+  @@map("submissions")
+}
+
+// ============================================
+// FILE MANAGEMENT
+// ============================================
+
+model File {
+  id                  String            @id @default(uuid())
+  submissionId        String
+
+  // File details
+  filename            String
+  originalFilename    String
+  filePath            String
+  fileSize            Int
+  mimeType            String
+
+  // Google Drive integration
+  googleDriveId       String?           @unique
+  googleDriveUrl      String?
+  driveSyncStatus     String            @default("PENDING")
+  driveSyncAttempts   Int               @default(0)
+  lastDriveSyncAt     DateTime?
+  driveSyncError      String?
+
+  // Security
+  virusScanStatus     String            @default("pending")
+  virusScanResult     String?
+  virusScanAt         DateTime?
+
+  // Metadata
+  uploadedAt          DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  deletedAt           DateTime?
+
+  // Relations
+  submission          Submission        @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  driveSyncLogs       DriveSyncLog[]
+
+  @@map("files")
+}
+
+// ============================================
+// GOOGLE DRIVE SYNC LOGGING
+// ============================================
+
+model DriveSyncLog {
+  id                String            @id @default(uuid())
+  fileId            String?
+
+  // Action details
+  action            String // UPLOAD, UPDATE, DELETE, RETRY
+  status            String
+  errorMessage      String?
+  errorStack        String?
+
+  // Request details
+  requestId         String?
+  attemptNumber     Int               @default(1)
+  durationMs        Int?
+
+  // Metadata
+  createdAt         DateTime          @default(now())
+
+  // Relations
+  file              File?             @relation(fields: [fileId], references: [id], onDelete: SetNull)
+
+  @@map("drive_sync_logs")
+}
+
+// ============================================
+// COMMENTS & COMMUNICATION
+// ============================================
+
+model Comment {
+  id                String            @id @default(uuid())
+  submissionId      String
+  userId            String
+
+  // Comment details
+  content           String
+  isInternal        Boolean           @default(false)
+
+  // Metadata
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  deletedAt         DateTime?
+
+  // Relations
+  submission        Submission        @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id])
+
+  @@map("comments")
+}
+
+// ============================================
+// STATUS TRACKING
+// ============================================
+
+model StatusHistory {
+  id                String            @id @default(uuid())
+  submissionId      String
+  changedById       String
+
+  // Status change details
+  oldStatus         String
+  newStatus         String
+  reason            String?
+
+  // Metadata
+  changedAt         DateTime          @default(now())
+
+  // Relations
+  submission        Submission        @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  changedBy         User              @relation(fields: [changedById], references: [id])
+
+  @@map("status_history")
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+model Notification {
+  id                String            @id @default(uuid())
+  userId            String
+
+  // Notification details
+  type              String // SUBMISSION_CREATED, STATUS_CHANGED, etc.
+  title             String
+  message           String
+  link              String?
+
+  // Metadata
+  isRead            Boolean           @default(false)
+  readAt            DateTime?
+  createdAt         DateTime          @default(now())
+
+  // Relations
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+// ============================================
+// TAGGING SYSTEM
+// ============================================
+
+model Tag {
+  id                String            @id @default(uuid())
+  name              String            @unique
+  color             String            @default("#808080")
+  description       String?
+
+  createdAt         DateTime          @default(now())
+
+  submissions       SubmissionTag[]
+
+  @@map("tags")
+}
+
+model SubmissionTag {
+  submissionId      String
+  tagId             String
+
+  createdAt         DateTime          @default(now())
+
+  submission        Submission        @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  tag               Tag               @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([submissionId, tagId])
+  @@map("submission_tags")
+}
+
+// ============================================
+// AUDIT LOGGING
+// ============================================
+
+model AuditLog {
+  id                String            @id @default(uuid())
+  userId            String?
+
+  // Action details
+  action            String
+  resource          String?
+  details           String? // JSON string
+
+  // Request details
+  ipAddress         String?
+  userAgent         String?
+
+  // Metadata
+  createdAt         DateTime          @default(now())
+
+  // Relations
+  user              User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
+
+// ============================================
+// SYSTEM SETTINGS
+// ============================================
+
+model SystemSetting {
+  id                String            @id @default(uuid())
+  key               String            @unique
+  value             String // JSON string
+  description       String?
+
+  updatedAt         DateTime          @updatedAt
+
+  @@map("system_settings")
+}
+
+// ============================================
+// EMAIL QUEUE
+// ============================================
+
+model EmailQueue {
+  id                String            @id @default(uuid())
+
+  // Email details
+  to                String
+  subject           String
+  body              String
+  htmlBody          String?
+
+  // Status
+  status            String            @default("PENDING") // PENDING, SENDING, SENT, FAILED
+  attempts          Int               @default(0)
+  lastAttemptAt     DateTime?
+  sentAt            DateTime?
+  error             String?
+
+  // Metadata
+  priority          Int               @default(5)
+  scheduledFor      DateTime?
+  createdAt         DateTime          @default(now())
+
+  @@map("email_queue")
+}
