@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story Timeline ❤️</title>
+    <style>
+        /* ===== FONTS & BASE STYLES ===== */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&family=Dancing+Script:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #FFB6C1;
+            --secondary-color: #4A4A8C;
+            --accent-color: #FFD700;
+            --background: #FAF9F6;
+            --text-dark: #333;
+            --text-light: #666;
+            --milestone-color: #FF6B9D;
+            --special-color: #9B59B6;
+            --fun-color: #F39C12;
+            --surprise-color: #3498DB;
+            --quote-color: #27AE60;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #FAF9F6 0%, #FFE8EC 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== SPLASH SCREEN ===== */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FFB6C1 0%, #9B59B6 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            cursor: pointer;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        #splash-screen.hidden {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        .splash-content {
+            text-align: center;
+            color: white;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .splash-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+
+        .splash-content .subtitle {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            opacity: 0.95;
+        }
+
+        .splash-content .dedication {
+            font-size: 1.2rem;
+            margin: 1.5rem 0;
+            font-weight: 300;
+            line-height: 1.8;
+            max-width: 500px;
+        }
+
+        .splash-content .heart {
+            font-size: 3rem;
+            margin: 2rem 0;
+            animation: heartbeat 1.5s ease infinite;
+        }
+
+        .splash-content .tap-hint {
+            font-size: 1rem;
+            margin-top: 2rem;
+            opacity: 0.8;
+            animation: pulse 2s ease infinite;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 3rem;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--milestone-color);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* ===== CONTROLS ===== */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-all {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-milestone {
+            background: var(--milestone-color);
+            color: white;
+        }
+
+        .btn-special {
+            background: var(--special-color);
+            color: white;
+        }
+
+        .btn-fun {
+            background: var(--fun-color);
+            color: white;
+        }
+
+        .btn-surprise {
+            background: var(--surprise-color);
+            color: white;
+        }
+
+        .btn-quote {
+            background: var(--quote-color);
+            color: white;
+        }
+
+        .btn-random {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            font-size: 1.1rem;
+            padding: 0.8rem 2rem;
+        }
+
+        .btn.active {
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.5), var(--shadow-lg);
+            transform: scale(1.05);
+        }
+
+        /* ===== STATISTICS ===== */
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--milestone-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            font-size: 1rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== TIMELINE ===== */
+        .timeline-container {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .timeline-event {
+            position: relative;
+            margin-bottom: 4rem;
+            opacity: 0;
+            animation: slideIn 0.6s ease forwards;
+        }
+
+        .timeline-event:nth-child(even) {
+            animation: slideInLeft 0.6s ease forwards;
+        }
+
+        .timeline-event.hidden {
+            display: none;
+        }
+
+        .event-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .timeline-event:nth-child(odd) .event-content {
+            flex-direction: row;
+        }
+
+        .timeline-event:nth-child(even) .event-content {
+            flex-direction: row-reverse;
+        }
+
+        .event-marker {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .event-marker:hover {
+            transform: translate(-50%, -50%) scale(1.3);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .event-marker.milestone { background: var(--milestone-color); }
+        .event-marker.special { background: var(--special-color); }
+        .event-marker.fun { background: var(--fun-color); }
+        .event-marker.surprise { background: var(--surprise-color); }
+        .event-marker.quote { background: var(--quote-color); }
+
+        .event-card {
+            flex: 1;
+            max-width: 45%;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .event-card.milestone { border-left-color: var(--milestone-color); }
+        .event-card.special { border-left-color: var(--special-color); }
+        .event-card.fun { border-left-color: var(--fun-color); }
+        .event-card.surprise { border-left-color: var(--surprise-color); }
+        .event-card.quote { border-left-color: var(--quote-color); }
+
+        .event-card:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .event-date {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .event-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .event-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-preview {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .event-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            padding: 0.3rem 0.8rem;
+            background: var(--background);
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 25px;
+            padding: 3rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            animation: scaleIn 0.3s ease;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--background);
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--milestone-color);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-event-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-event-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .modal-event-date {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .modal-event-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+        }
+
+        .modal-event-quote {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            text-align: center;
+            color: var(--milestone-color);
+            padding: 1.5rem;
+            background: var(--background);
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .modal-event-location {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .modal-event-location::before {
+            content: "📍 ";
+        }
+
+        .modal-event-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .modal-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .modal-nav-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        footer p {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        footer .heart-footer {
+            color: var(--milestone-color);
+            font-size: 1.2rem;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.15); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .splash-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .splash-content .subtitle {
+                font-size: 1.3rem;
+            }
+
+            .splash-content .dedication {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            .controls {
+                padding: 1rem;
+            }
+
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .btn-random {
+                font-size: 0.95rem;
+                padding: 0.7rem 1.5rem;
+            }
+
+            .statistics {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .stat-card .number {
+                font-size: 2rem;
+            }
+
+            .stat-card .label {
+                font-size: 0.85rem;
+            }
+
+            .timeline-line {
+                left: 30px;
+            }
+
+            .event-marker {
+                left: 30px;
+            }
+
+            .timeline-event:nth-child(odd) .event-content,
+            .timeline-event:nth-child(even) .event-content {
+                flex-direction: row;
+                padding-left: 60px;
+            }
+
+            .event-card {
+                max-width: 100%;
+            }
+
+            .event-title {
+                font-size: 1.3rem;
+            }
+
+            .modal-content {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .modal-event-title {
+                font-size: 2rem;
+            }
+
+            .modal-event-quote {
+                font-size: 1.2rem;
+                padding: 1rem;
+            }
+
+            .modal-navigation {
+                flex-direction: column;
+            }
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 2rem; }
+        .mb-1 { margin-bottom: 1rem; }
+        .mb-2 { margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <h1>OUR STORY</h1>
+            <div class="subtitle">Made with love by Elias Al Dahan</div>
+            <div class="dedication">
+                For you, to remember all the moments<br>
+                that made us who we are today
+            </div>
+            <div class="heart">❤️</div>
+            <div class="tap-hint">Click anywhere to begin</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Our Story Timeline</h1>
+            <p>Every moment with you is a memory I treasure</p>
+        </header>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="filter-buttons">
+                <button class="btn btn-all active" data-filter="all">All Moments</button>
+                <button class="btn btn-milestone" data-filter="milestone">🎯 Milestones</button>
+                <button class="btn btn-special" data-filter="special">💝 Special Moments</button>
+                <button class="btn btn-fun" data-filter="fun">😂 Fun Memories</button>
+                <button class="btn btn-surprise" data-filter="surprise">🎁 Surprises</button>
+                <button class="btn btn-quote" data-filter="quote">💬 Quotes</button>
+            </div>
+            <button class="btn btn-random" id="random-btn">✨ Random Memory</button>
+        </div>
+
+        <!-- Statistics -->
+        <div class="statistics">
+            <div class="stat-card">
+                <div class="number" id="days-together">0</div>
+                <div class="label">Days Together</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="total-events">0</div>
+                <div class="label">Memories Shared</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="next-anniversary">0</div>
+                <div class="label">Days to Anniversary</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">∞</div>
+                <div class="label">Forever Ahead</div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+            <div id="timeline-events"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p><strong>Created by Elias Al Dahan</strong></p>
+            <p>Made with <span class="heart-footer">❤️</span> to cherish our memories</p>
+            <p id="creation-date"></p>
+        </footer>
+    </div>
+
+    <!-- Modal -->
+    <div id="event-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">×</button>
+            <div class="modal-event-icon" id="modal-icon"></div>
+            <h2 class="modal-event-title" id="modal-title"></h2>
+            <div class="modal-event-date" id="modal-date"></div>
+            <div class="modal-event-location" id="modal-location"></div>
+            <div class="modal-event-description" id="modal-description"></div>
+            <div class="modal-event-quote" id="modal-quote"></div>
+            <div class="modal-event-tags" id="modal-tags"></div>
+            <div class="modal-navigation">
+                <button class="modal-nav-btn" id="prev-event">← Previous</button>
+                <button class="modal-nav-btn" id="next-event">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== EVENT DATA =====
+        const events = [
+            {
+                id: 1,
+                date: "2023-01-15",
+                title: "The First Hello",
+                category: "milestone",
+                description: "I still remember the exact moment our eyes met. You smiled, and somehow, I knew my life was about to change in the most beautiful way. That first conversation felt like coming home to a place I'd never been.",
+                location: "Downtown Coffee Shop",
+                tags: ["first meeting", "nervous", "magical", "fate"],
+                mood: "excited",
+                quote: "Some people make the world more special just by being in it",
+                icon: "🌟"
+            },
+            {
+                id: 2,
+                date: "2023-02-03",
+                title: "Our First Date",
+                category: "milestone",
+                description: "We walked and talked for hours, losing track of time completely. You wore that dress that made you look absolutely radiant. I was so nervous I almost forgot my own name, but being with you felt so natural. Four hours passed like four minutes.",
+                location: "Riverside Park & Italian Bistro",
+                tags: ["first date", "butterflies", "connection", "endless conversation"],
+                mood: "nervous and excited",
+                quote: "I could talk to you forever and still have more to say",
+                icon: "💕"
+            },
+            {
+                id: 3,
+                date: "2023-02-14",
+                title: "Valentine's Day Surprise",
+                category: "surprise",
+                description: "I know you said 'no big deal' for our first Valentine's Day, but I couldn't help myself. The look on your face when you saw the room full of your favorite flowers was worth every penny and every sneaky text to your friends for intel.",
+                location: "Your Apartment",
+                tags: ["valentine's day", "flowers", "surprise", "romantic"],
+                mood: "romantic",
+                quote: "The look on your face was better than any gift you could give me",
+                icon: "🌹"
+            },
+            {
+                id: 4,
+                date: "2023-03-08",
+                title: "The First 'I Love You'",
+                category: "milestone",
+                description: "We were watching the sunset, and it just came out. I didn't plan it, rehearse it, or even think about it. It was just the truth, as natural as breathing. When you said it back, with tears in your eyes, I knew this was real.",
+                location: "Sunset Point Overlook",
+                tags: ["i love you", "sunset", "emotional", "milestone"],
+                mood: "overwhelmed with love",
+                quote: "I love you - the three words I'll never get tired of saying",
+                icon: "💖"
+            },
+            {
+                id: 5,
+                date: "2023-04-12",
+                title: "The Cooking Disaster",
+                category: "fun",
+                description: "Remember when I tried to impress you with a 'gourmet' dinner? The smoke alarm went off, the pasta was somehow both burnt and undercooked, and we ended up ordering pizza. But we laughed so hard we cried, and I realized perfect moments don't need perfect plans.",
+                location: "My Kitchen (RIP)",
+                tags: ["cooking fail", "laughter", "pizza", "memories"],
+                mood: "laughing hysterically",
+                quote: "You're the only person I'd want by my side during a kitchen fire",
+                icon: "🔥"
+            },
+            {
+                id: 6,
+                date: "2023-05-20",
+                title: "Meeting Your Family",
+                category: "milestone",
+                description: "I was terrified, but you held my hand and told me they'd love me. Your mom's hug made me feel welcomed immediately, and by the end of dinner, your dad was showing me his dad jokes collection. Knowing I was accepted into your family meant everything.",
+                location: "Your Family Home",
+                tags: ["family", "nervous", "acceptance", "belonging"],
+                mood: "nervous then relieved",
+                quote: "Family isn't just who you're born with, it's who you choose",
+                icon: "👨‍👩‍👧‍👦"
+            },
+            {
+                id: 7,
+                date: "2023-06-15",
+                title: "Road Trip Adventure",
+                category: "special",
+                description: "Just us, the open road, terrible singing to our favorite songs, and no real destination. We got lost three times, found that amazing hidden diner, and watched the stars from the car hood. It's still one of my favorite memories.",
+                location: "Pacific Coast Highway",
+                tags: ["road trip", "adventure", "singing", "freedom"],
+                mood: "adventurous",
+                quote: "Not all who wander are lost - some are just having the time of their lives",
+                icon: "🚗"
+            },
+            {
+                id: 8,
+                date: "2023-07-04",
+                title: "Fireworks & First Kiss in the Rain",
+                category: "special",
+                description: "The fireworks show got rained out, but we stayed anyway. Everyone else ran for cover, but we just stood there, getting soaked, laughing and kissing in the rain like we were in a movie. It was perfect chaos.",
+                location: "City Park",
+                tags: ["rain", "fireworks", "spontaneous", "romantic"],
+                mood: "blissfully happy",
+                quote: "Life isn't about waiting for the storm to pass, it's about dancing in the rain",
+                icon: "🎆"
+            },
+            {
+                id: 9,
+                date: "2023-08-30",
+                title: "The 'Words With Friends' Championship",
+                category: "fun",
+                description: "Our competition got hilariously intense. You're still bitter about my 'QUIXOTIC' for 158 points. I'm still suspicious about whether 'ZEPHYR' is actually a word or if you made it up. Can't wait for the rematch (which I'll also win).",
+                location: "Living Room Game Night",
+                tags: ["games", "competition", "funny", "inside joke"],
+                mood: "competitive",
+                quote: "I'd lose a thousand games just to see you smile when you win",
+                icon: "🎮"
+            },
+            {
+                id: 10,
+                date: "2023-09-23",
+                title: "Adopted Our First Plant",
+                category: "special",
+                description: "You insisted plants are practice for future responsibilities. I insisted it was just a succulent. You named it Gerald. Gerald is still alive (barely). We're both very proud plant parents, even though we googled 'how often to water succulent' at least 50 times.",
+                location: "Garden Center",
+                tags: ["plants", "gerald", "responsibility", "cute"],
+                mood: "domestic bliss",
+                quote: "If we can keep Gerald alive, we can handle anything",
+                icon: "🌵"
+            },
+            {
+                id: 11,
+                date: "2023-10-31",
+                title: "Halloween Costume Fail",
+                category: "fun",
+                description: "We tried to do a couple's costume. You were a beautiful butterfly. I was supposed to be a caterpillar but looked more like a lumpy green worm. The party photos are hilarious and horrifying. Best terrible costume ever.",
+                location: "Emma's Halloween Party",
+                tags: ["halloween", "costume fail", "laughing", "photos"],
+                mood: "embarrassed but happy",
+                quote: "You make even my most ridiculous moments feel perfect",
+                icon: "🎃"
+            },
+            {
+                id: 12,
+                date: "2023-11-24",
+                title: "Thanksgiving Together",
+                category: "special",
+                description: "Our first major holiday together. Between your family's traditions and mine, we ate enough food for a small army. Your aunt told embarrassing stories about you, my uncle told terrible jokes, and I got to see you in your element, surrounded by love.",
+                location: "Combined Family Dinner",
+                tags: ["thanksgiving", "family", "traditions", "grateful"],
+                mood: "grateful",
+                quote: "Grateful doesn't begin to cover how I feel about you",
+                icon: "🦃"
+            },
+            {
+                id: 13,
+                date: "2023-12-25",
+                title: "First Christmas Morning",
+                category: "milestone",
+                description: "Waking up next to you on Christmas morning, seeing your excited face before opening presents, drinking hot cocoa in our pajamas - it was every Christmas movie cliché and it was absolutely perfect. You made the holidays feel magical again.",
+                location: "Our Place",
+                tags: ["christmas", "morning", "cozy", "magical"],
+                mood: "cozy and loved",
+                quote: "You're the best gift I could ever receive",
+                icon: "🎄"
+            },
+            {
+                id: 14,
+                date: "2024-01-01",
+                title: "New Year's Promise",
+                category: "quote",
+                description: "At midnight, with fireworks in the background, we made a promise: no matter what comes, we'll face it together. Every challenge, every joy, every mundane Tuesday - we're a team. That promise means everything to me.",
+                location: "Rooftop New Year's Party",
+                tags: ["new year", "promise", "commitment", "future"],
+                mood: "hopeful",
+                quote: "Here's to the future - every tomorrow with you is a gift",
+                icon: "🥂"
+            },
+            {
+                id: 15,
+                date: "2024-02-14",
+                title: "Valentine's Day Year Two",
+                category: "special",
+                description: "No grand gestures this year, just us. We cooked dinner together (successfully this time!), danced in the kitchen, and talked about our dreams. Sometimes the simple moments are the most romantic ones.",
+                location: "Home Sweet Home",
+                tags: ["valentine's day", "simple", "intimate", "perfect"],
+                mood: "content",
+                quote: "I don't need grand gestures when I have you",
+                icon: "💝"
+            },
+            {
+                id: 16,
+                date: "2024-03-20",
+                title: "The Flat Tire Adventure",
+                category: "fun",
+                description: "Got a flat tire in the middle of nowhere. Neither of us really knew how to change it. We watched three YouTube videos, argued about the instructions, got covered in dirt, and finally succeeded. We felt like absolute champions. Also, we now know how to change a tire.",
+                location: "Middle of Nowhere Highway",
+                tags: ["adventure", "teamwork", "problem solving", "accomplishment"],
+                mood: "triumphant",
+                quote: "We make a pretty good team, even when we have no idea what we're doing",
+                icon: "🚙"
+            },
+            {
+                id: 17,
+                date: "2024-05-10",
+                title: "Surprise Picnic Date",
+                category: "surprise",
+                description: "You planned the whole thing in secret. Homemade sandwiches, my favorite snacks, a playlist of 'our songs,' and a spot under the old oak tree. The fact that you remembered I mentioned wanting to picnic there months ago - that's love.",
+                location: "Riverside Park",
+                tags: ["picnic", "thoughtful", "surprise", "romantic"],
+                mood: "touched",
+                quote: "The best things in life are the people who remember the little things",
+                icon: "🧺"
+            },
+            {
+                id: 18,
+                date: "2024-07-15",
+                title: "Beach Sunset Promise",
+                category: "milestone",
+                description: "Walking along the beach at sunset, you stopped and told me you want to spend forever with me. No ring, no proposal, just a promise for the future. We wrote our initials in the sand and watched the waves wash them away, knowing our love will last longer than anything written in sand.",
+                location: "Sunset Beach",
+                tags: ["beach", "sunset", "promise", "forever"],
+                mood: "emotional",
+                quote: "Forever isn't long enough with you",
+                icon: "🌅"
+            },
+            {
+                id: 19,
+                date: "2024-09-05",
+                title: "Karaoke Catastrophe",
+                category: "fun",
+                description: "We attempted a duet. It was... memorable. We were off-key, off-beat, and definitely off our game. But we were together, laughing so hard we could barely sing, and making memories that'll last forever. The video evidence has been secured (for blackmail purposes).",
+                location: "Downtown Karaoke Bar",
+                tags: ["karaoke", "singing", "disaster", "memories"],
+                mood: "laughing uncontrollably",
+                quote: "I'd rather be off-key with you than pitch-perfect with anyone else",
+                icon: "🎤"
+            },
+            {
+                id: 20,
+                date: "2024-10-31",
+                title: "Right Now, This Moment",
+                category: "quote",
+                description: "As I create this timeline, I'm thinking about all the moments we've shared and all the ones still to come. Every memory with you is a treasure. Thank you for being my best friend, my partner, my everything. Here's to a thousand more memories, and to always remembering the ones that brought us here.",
+                location: "Wherever You Are Reading This",
+                tags: ["present", "gratitude", "love", "future"],
+                mood: "grateful and in love",
+                quote: "This isn't the end of our story - it's just the beginning",
+                icon: "✨"
+            }
+        ];
+
+        // ===== STATE MANAGEMENT =====
+        let currentFilter = 'all';
+        let currentEventIndex = 0;
+        let visibleEvents = [...events];
+
+        // ===== HELPER FUNCTIONS =====
+        const getCategoryIcon = (category) => {
+            const icons = {
+                milestone: '🎯',
+                special: '💝',
+                fun: '😂',
+                surprise: '🎁',
+                quote: '💬'
+            };
+            return icons[category] || '✨';
+        };
+
+        const formatDate = (dateString) => {
+            const date = new Date(dateString);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        };
+
+        const calculateDaysBetween = (date1, date2) => {
+            const oneDay = 24 * 60 * 60 * 1000;
+            return Math.round(Math.abs((date1 - date2) / oneDay));
+        };
+
+        // ===== STATISTICS =====
+        const updateStatistics = () => {
+            const firstDate = new Date(events[0].date);
+            const today = new Date();
+            const daysTogether = calculateDaysBetween(firstDate, today);
+
+            document.getElementById('days-together').textContent = daysTogether;
+            document.getElementById('total-events').textContent = events.length;
+
+            // Calculate next anniversary
+            const nextAnniversary = new Date(firstDate);
+            nextAnniversary.setFullYear(today.getFullYear());
+            if (nextAnniversary < today) {
+                nextAnniversary.setFullYear(today.getFullYear() + 1);
+            }
+            const daysToAnniversary = calculateDaysBetween(today, nextAnniversary);
+            document.getElementById('next-anniversary').textContent = daysToAnniversary;
+        };
+
+        // ===== RENDER TIMELINE =====
+        const renderTimeline = () => {
+            const container = document.getElementById('timeline-events');
+            container.innerHTML = '';
+
+            visibleEvents.forEach((event, index) => {
+                const eventDiv = document.createElement('div');
+                eventDiv.className = `timeline-event ${currentFilter !== 'all' && event.category !== currentFilter ? 'hidden' : ''}`;
+                eventDiv.style.animationDelay = `${index * 0.1}s`;
+
+                eventDiv.innerHTML = `
+                    <div class="event-content">
+                        <div class="event-card ${event.category}" data-event-id="${event.id}">
+                            <div class="event-icon">${event.icon}</div>
+                            <div class="event-date">${formatDate(event.date)}</div>
+                            <h3 class="event-title">${event.title}</h3>
+                            <p class="event-preview">${event.description.substring(0, 120)}...</p>
+                            <div class="event-tags">
+                                ${event.tags.slice(0, 3).map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="event-marker ${event.category}"></div>
+                    </div>
+                `;
+
+                container.appendChild(eventDiv);
+            });
+
+            // Add click handlers
+            document.querySelectorAll('.event-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const eventId = parseInt(e.currentTarget.getAttribute('data-event-id'));
+                    openModal(eventId);
+                });
+            });
+        };
+
+        // ===== MODAL FUNCTIONS =====
+        const openModal = (eventId) => {
+            const event = events.find(e => e.id === eventId);
+            if (!event) return;
+
+            currentEventIndex = events.findIndex(e => e.id === eventId);
+
+            document.getElementById('modal-icon').textContent = event.icon;
+            document.getElementById('modal-title').textContent = event.title;
+            document.getElementById('modal-date').textContent = formatDate(event.date);
+            document.getElementById('modal-location').textContent = event.location;
+            document.getElementById('modal-description').textContent = event.description;
+
+            const quoteElement = document.getElementById('modal-quote');
+            if (event.quote) {
+                quoteElement.textContent = `"${event.quote}"`;
+                quoteElement.style.display = 'block';
+            } else {
+                quoteElement.style.display = 'none';
+            }
+
+            const tagsContainer = document.getElementById('modal-tags');
+            tagsContainer.innerHTML = event.tags.map(tag =>
+                `<span class="tag">#${tag}</span>`
+            ).join('');
+
+            // Update navigation buttons
+            document.getElementById('prev-event').disabled = currentEventIndex === 0;
+            document.getElementById('next-event').disabled = currentEventIndex === events.length - 1;
+
+            document.getElementById('event-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeModal = () => {
+            document.getElementById('event-modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
+
+        const navigateEvent = (direction) => {
+            const newIndex = currentEventIndex + direction;
+            if (newIndex >= 0 && newIndex < events.length) {
+                openModal(events[newIndex].id);
+            }
+        };
+
+        // ===== FILTER FUNCTIONS =====
+        const filterEvents = (category) => {
+            currentFilter = category;
+
+            // Update button states
+            document.querySelectorAll('.filter-buttons .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter and re-render
+            if (category === 'all') {
+                visibleEvents = [...events];
+            } else {
+                visibleEvents = events.filter(e => e.category === category);
+            }
+
+            renderTimeline();
+        };
+
+        // ===== RANDOM MEMORY =====
+        const showRandomMemory = () => {
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            openModal(randomEvent.id);
+        };
+
+        // ===== EVENT LISTENERS =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Splash screen
+            const splashScreen = document.getElementById('splash-screen');
+            splashScreen.addEventListener('click', () => {
+                splashScreen.classList.add('hidden');
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                }, 800);
+            });
+
+            // Filter buttons
+            document.querySelectorAll('.filter-buttons .btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const filter = e.target.getAttribute('data-filter');
+                    currentFilter = filter;
+
+                    document.querySelectorAll('.filter-buttons .btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+
+                    if (filter === 'all') {
+                        visibleEvents = [...events];
+                    } else {
+                        visibleEvents = events.filter(ev => ev.category === filter);
+                    }
+
+                    renderTimeline();
+                });
+            });
+
+            // Random button
+            document.getElementById('random-btn').addEventListener('click', showRandomMemory);
+
+            // Modal controls
+            document.getElementById('modal-close').addEventListener('click', closeModal);
+            document.getElementById('prev-event').addEventListener('click', () => navigateEvent(-1));
+            document.getElementById('next-event').addEventListener('click', () => navigateEvent(1));
+
+            // Modal backdrop click
+            document.getElementById('event-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'event-modal') {
+                    closeModal();
+                }
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                const modal = document.getElementById('event-modal');
+                if (modal.classList.contains('active')) {
+                    if (e.key === 'Escape') closeModal();
+                    if (e.key === 'ArrowLeft') navigateEvent(-1);
+                    if (e.key === 'ArrowRight') navigateEvent(1);
+                }
+            });
+
+            // Set creation date
+            const today = new Date();
+            document.getElementById('creation-date').textContent =
+                `Created ${today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+
+            // Initialize
+            updateStatistics();
+            renderTimeline();
+        });
+    </script>
+</body>
+</html>
