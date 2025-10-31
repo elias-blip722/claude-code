@@ -715,6 +715,67 @@
             }
         }
 
+        /* ===== PHOTO & VIDEO SUPPORT ===== */
+        .event-media {
+            width: 100%;
+            margin-top: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .event-photo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .event-photo:hover {
+            transform: scale(1.02);
+        }
+
+        .event-video {
+            width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+        }
+
+        .modal-event-media {
+            width: 100%;
+            margin: 2rem 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-event-photo {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 15px;
+        }
+
+        .modal-event-video {
+            width: 100%;
+            max-height: 500px;
+            border-radius: 15px;
+        }
+
+        .media-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--background) 0%, #E8E8E8 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
         /* ===== UTILITY CLASSES ===== */
         .text-center { text-align: center; }
         .mt-1 { margin-top: 1rem; }
@@ -801,6 +862,7 @@
             <h2 class="modal-event-title" id="modal-title"></h2>
             <div class="modal-event-date" id="modal-date"></div>
             <div class="modal-event-location" id="modal-location"></div>
+            <div class="modal-event-media" id="modal-media"></div>
             <div class="modal-event-description" id="modal-description"></div>
             <div class="modal-event-quote" id="modal-quote"></div>
             <div class="modal-event-tags" id="modal-tags"></div>
@@ -824,7 +886,9 @@
                 tags: ["first meeting", "nervous", "magical", "fate"],
                 mood: "excited",
                 quote: "Some people make the world more special just by being in it",
-                icon: "🌟"
+                icon: "🌟",
+                photo: "",  // Add your photo here (data URI or URL)
+                video: ""   // Add your video here (data URI or URL)
             },
             {
                 id: 2,
@@ -836,7 +900,9 @@
                 tags: ["first date", "butterflies", "connection", "endless conversation"],
                 mood: "nervous and excited",
                 quote: "I could talk to you forever and still have more to say",
-                icon: "💕"
+                icon: "💕",
+                photo: "",  // Add your photo here
+                video: ""   // Or add video here
             },
             {
                 id: 3,
@@ -1113,12 +1179,21 @@
                 eventDiv.className = `timeline-event ${currentFilter !== 'all' && event.category !== currentFilter ? 'hidden' : ''}`;
                 eventDiv.style.animationDelay = `${index * 0.1}s`;
 
+                // Generate media HTML for card
+                let mediaHTML = '';
+                if (event.photo) {
+                    mediaHTML = `<img src="${event.photo}" alt="${event.title}" class="event-photo">`;
+                } else if (event.video) {
+                    mediaHTML = `<video src="${event.video}" class="event-video" muted loop playsinline></video>`;
+                }
+
                 eventDiv.innerHTML = `
                     <div class="event-content">
                         <div class="event-card ${event.category}" data-event-id="${event.id}">
                             <div class="event-icon">${event.icon}</div>
                             <div class="event-date">${formatDate(event.date)}</div>
                             <h3 class="event-title">${event.title}</h3>
+                            ${mediaHTML}
                             <p class="event-preview">${event.description.substring(0, 120)}...</p>
                             <div class="event-tags">
                                 ${event.tags.slice(0, 3).map(tag => `<span class="tag">#${tag}</span>`).join('')}
@@ -1152,6 +1227,19 @@
             document.getElementById('modal-date').textContent = formatDate(event.date);
             document.getElementById('modal-location').textContent = event.location;
             document.getElementById('modal-description').textContent = event.description;
+
+            // Handle media (photos and videos)
+            const mediaContainer = document.getElementById('modal-media');
+            if (event.photo) {
+                mediaContainer.innerHTML = `<img src="${event.photo}" alt="${event.title}" class="modal-event-photo">`;
+                mediaContainer.style.display = 'block';
+            } else if (event.video) {
+                mediaContainer.innerHTML = `<video src="${event.video}" class="modal-event-video" controls playsinline></video>`;
+                mediaContainer.style.display = 'block';
+            } else {
+                mediaContainer.innerHTML = '';
+                mediaContainer.style.display = 'none';
+            }
 
             const quoteElement = document.getElementById('modal-quote');
             if (event.quote) {
@@ -1279,3 +1367,328 @@
     </script>
 </body>
 </html>
+
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+📸 HOW TO ADD PHOTOS AND VIDEOS TO YOUR TIMELINE
+═══════════════════════════════════════════════════════════════════════════════
+
+Great news! Your timeline now supports embedded photos and videos!
+
+Photos will appear:
+✓ As thumbnails on the timeline cards
+✓ Full-size in the modal when you click an event
+✓ Fully responsive on iPhone, Mac, and Windows
+
+Videos will appear:
+✓ As preview on timeline cards
+✓ Full-size with controls in the modal
+✓ Playable on all devices
+
+───────────────────────────────────────────────────────────────────────────────
+🎯 TWO WAYS TO ADD PHOTOS/VIDEOS
+───────────────────────────────────────────────────────────────────────────────
+
+METHOD 1: Data URIs (Embedded in the File) - RECOMMENDED FOR SMALL FILES
+METHOD 2: External URLs (Photos hosted online) - RECOMMENDED FOR MANY PHOTOS
+
+───────────────────────────────────────────────────────────────────────────────
+📋 METHOD 1: EMBEDDED PHOTOS (Data URIs)
+───────────────────────────────────────────────────────────────────────────────
+
+✅ PROS:
+- Single file, no dependencies
+- Works offline forever
+- Nothing can break or disappear
+
+❌ CONS:
+- Makes file larger (iPhone photos can be 2-5MB each)
+- Email limits (most email services limit to 25MB)
+- File becomes harder to edit if too large
+
+🔧 HOW TO DO IT:
+
+STEP 1: Compress your iPhone photo
+- Use a free online tool like https://tinypng.com or https://compressor.io
+- Compress to ~200-500KB per photo (quality will still be great!)
+- This is CRITICAL to keep file size manageable
+
+STEP 2: Convert photo to Data URI
+- Go to: https://base64.guru/converter/encode/image
+- Or: https://www.base64-image.de/
+- Upload your compressed photo
+- Copy the entire data URI (starts with: data:image/jpeg;base64,...)
+
+STEP 3: Add to your event
+Find the event in the code and add to the photo field:
+
+photo: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD...",
+
+EXAMPLE:
+{
+    id: 1,
+    date: "2023-01-15",
+    title: "Our First Date",
+    category: "milestone",
+    description: "...",
+    location: "Downtown",
+    tags: ["date", "love"],
+    mood: "excited",
+    quote: "Best day ever",
+    icon: "💕",
+    photo: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAYE...",  // ← Your data URI
+    video: ""
+},
+
+⚠️ IMPORTANT NOTES:
+- The data URI will be VERY long (thousands of characters) - that's normal!
+- Keep the quotes around it
+- For 10-15 photos, aim for ~200-300KB each = ~3-4MB total file size
+- For 20+ photos, use METHOD 2 instead
+
+───────────────────────────────────────────────────────────────────────────────
+🌐 METHOD 2: EXTERNAL URLS (Hosted Photos) - BEST FOR MANY PHOTOS
+───────────────────────────────────────────────────────────────────────────────
+
+✅ PROS:
+- File stays tiny (46KB)
+- Can add unlimited photos
+- Easy to update photos later
+- Can use full iPhone quality
+
+❌ CONS:
+- Needs internet connection to view photos
+- Photos could disappear if hosting service changes
+- Requires uploading photos somewhere
+
+🔧 HOW TO DO IT:
+
+STEP 1: Upload photos to a hosting service
+
+OPTION A: Google Photos (Free, Unlimited)
+1. Upload photos to Google Photos
+2. Right-click photo → "Copy image address"
+3. Use that URL
+
+OPTION B: Imgur (Free, Easy)
+1. Go to https://imgur.com
+2. Upload photo
+3. Right-click → "Copy image link"
+4. Use that URL
+
+OPTION C: Dropbox/Google Drive (If you already use them)
+1. Upload photo
+2. Get shareable link
+3. Modify link to direct image URL (Google for specific instructions)
+
+STEP 2: Add URL to your event
+
+photo: "https://i.imgur.com/ABC123.jpg",
+
+EXAMPLE:
+{
+    id: 2,
+    date: "2023-02-14",
+    title: "Beach Sunset",
+    category: "special",
+    description: "...",
+    location: "Santa Monica",
+    tags: ["beach", "sunset"],
+    mood: "romantic",
+    quote: "Perfect evening",
+    icon: "🌅",
+    photo: "https://i.imgur.com/ABC123.jpg",  // ← Your photo URL
+    video: ""
+},
+
+───────────────────────────────────────────────────────────────────────────────
+📹 HOW TO ADD VIDEOS
+───────────────────────────────────────────────────────────────────────────────
+
+Videos work the same way as photos:
+
+METHOD 1: Embedded (Data URI)
+⚠️ WARNING: Videos are HUGE - a 10-second iPhone video can be 20-50MB!
+- Only use this for very short videos (< 5 seconds)
+- Compress heavily first
+
+METHOD 2: External URL (RECOMMENDED)
+- Upload to YouTube, Vimeo, or Google Drive
+- Use direct video link
+- Much better for video!
+
+EXAMPLE:
+{
+    id: 10,
+    date: "2024-05-20",
+    title: "Surprise Proposal",
+    category: "milestone",
+    description: "...",
+    location: "Our Spot",
+    tags: ["proposal", "engaged"],
+    mood: "emotional",
+    quote: "Yes!",
+    icon: "💍",
+    photo: "",
+    video: "https://example.com/our-video.mp4"  // ← Your video URL
+},
+
+───────────────────────────────────────────────────────────────────────────────
+💡 RECOMMENDATIONS
+───────────────────────────────────────────────────────────────────────────────
+
+BEST STRATEGY FOR YOUR TIMELINE:
+
+If you have 5-10 photos:
+→ Use METHOD 1 (Data URIs) with compressed photos (~300KB each)
+→ Total file size: ~3-4MB (perfect for email!)
+
+If you have 15-20 photos:
+→ Use METHOD 2 (External URLs) via Imgur or Google Photos
+→ File stays tiny, unlimited photos
+
+If you have videos:
+→ Always use METHOD 2 (External URLs)
+→ Upload to YouTube or Google Drive
+
+MIXED APPROACH (BEST!):
+→ Use Data URIs for your top 5-10 most important photos
+→ Use URLs for the rest
+→ This way the file works offline for key moments, stays reasonably sized
+
+───────────────────────────────────────────────────────────────────────────────
+🚀 QUICK START GUIDE
+───────────────────────────────────────────────────────────────────────────────
+
+1. GATHER YOUR PHOTOS
+   - Choose 10-20 favorite photos from your relationship
+   - Make sure they're from your iPhone or computer
+
+2. COMPRESS THEM
+   - Go to https://tinypng.com
+   - Upload each photo
+   - Download compressed versions (~200-300KB each)
+
+3. CONVERT TO DATA URI (for embedded) OR UPLOAD TO IMGUR (for URLs)
+   - Embedded: https://base64.guru/converter/encode/image
+   - URLs: https://imgur.com (upload and copy link)
+
+4. ADD TO EVENTS
+   - Find the event in the code (search for the event id or title)
+   - Add photo URL or data URI to the photo: "" field
+   - Save the file
+
+5. TEST
+   - Open the HTML file in your browser
+   - Click on events to see photos appear!
+
+───────────────────────────────────────────────────────────────────────────────
+📱 iPHONE-SPECIFIC TIPS
+───────────────────────────────────────────────────────────────────────────────
+
+iPhone photos are usually 2-5MB each. You MUST compress them:
+
+1. Transfer photos from iPhone to computer (AirDrop or iCloud)
+2. Compress each photo to ~200-300KB using TinyPNG
+3. Then convert to Data URI or upload to Imgur
+
+ALTERNATIVE FOR iPHONE:
+Use the "Shortcuts" app on iPhone to auto-resize photos before transferring!
+
+───────────────────────────────────────────────────────────────────────────────
+🔧 ADDING PHOTO/VIDEO FIELDS TO ALL EVENTS
+───────────────────────────────────────────────────────────────────────────────
+
+The first 2 events already have photo and video fields. To add them to all events:
+
+Find each event in the code and add these two lines before the closing }:
+
+    photo: "",
+    video: ""
+
+BEFORE:
+{
+    id: 5,
+    date: "2023-04-12",
+    title: "The Cooking Disaster",
+    category: "fun",
+    description: "...",
+    location: "My Kitchen",
+    tags: ["cooking", "fail"],
+    mood: "laughing",
+    quote: "...",
+    icon: "🔥"
+}
+
+AFTER:
+{
+    id: 5,
+    date: "2023-04-12",
+    title: "The Cooking Disaster",
+    category: "fun",
+    description: "...",
+    location: "My Kitchen",
+    tags: ["cooking", "fail"],
+    mood: "laughing",
+    quote: "...",
+    icon: "🔥",
+    photo: "",  // ← Add this
+    video: ""   // ← Add this
+}
+
+Then fill in the photo or video field with your data URI or URL!
+
+───────────────────────────────────────────────────────────────────────────────
+🎨 EXAMPLE WITH REAL PHOTO
+───────────────────────────────────────────────────────────────────────────────
+
+{
+    id: 1,
+    date: "2023-01-15",
+    title: "Our First Date",
+    category: "milestone",
+    description: "The day that changed everything...",
+    location: "Central Park",
+    tags: ["first date", "magical", "nervous"],
+    mood: "excited",
+    quote: "I knew you were special",
+    icon: "💕",
+    photo: "https://i.imgur.com/yourphoto.jpg",  // ← Add real photo URL here
+    video: ""
+},
+
+───────────────────────────────────────────────────────────────────────────────
+❓ TROUBLESHOOTING
+───────────────────────────────────────────────────────────────────────────────
+
+Q: Photos not showing up?
+A: Make sure the URL is correct and publicly accessible. Test by pasting the URL
+   in your browser - you should see just the image.
+
+Q: File too large to email?
+A: Compress photos more, or switch to using URLs instead of data URIs.
+
+Q: Video not playing?
+A: Make sure it's a direct link to .mp4 file. YouTube embed links won't work -
+   you need the direct video file URL.
+
+Q: How do I know if my photo is compressed enough?
+A: Aim for 200-500KB per photo. Right-click the file → Properties to check size.
+
+───────────────────────────────────────────────────────────────────────────────
+✅ YOU'RE ALL SET!
+───────────────────────────────────────────────────────────────────────────────
+
+Your timeline now has FULL photo and video support!
+
+Add your photos, save the file, and watch your memories come to life! 💕
+
+Questions? Issues? Just Google "convert image to base64" or "free image hosting"
+for tons of helpful guides!
+
+Happy memory-making! 🌟
+
+- Made with ❤️ by Elias Al Dahan
+
+═══════════════════════════════════════════════════════════════════════════════
+-->
